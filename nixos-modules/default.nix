@@ -15,6 +15,7 @@
     ./scx.nix
     ./security.nix
     ./steam.nix
+    ./uwsm.nix
     ../packages
   ];
 
@@ -53,7 +54,7 @@
     hostFiles = [
       (pkgs.fetchurl {
         url = "https://hblock.molinero.dev/hosts";
-        hash = "sha256-m2ryIt2WwzmxOhWC92DdyV/QU3U6yeY9yWFe/NhbDpQ=";
+        hash = "sha256-7i6KIWlTqdEGoyZfkYWjwugpWTiYlAgklcosrLVD31Q=";
       })
     ];
     networkmanager = {

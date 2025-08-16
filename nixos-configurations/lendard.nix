@@ -7,33 +7,34 @@ networking.hostName = "lendard";
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-fileSystems."/" =
-    { device = "/dev/disk/by-uuid/a3ddfbaf-91e8-4b04-8df0-77f2d52b084e";
+    fileSystems."/" =
+    { device = "/dev/disk/by-uuid/204f06b0-6b5b-4ede-b07e-bc733a8aa0fc";
       fsType = "btrfs";
-      options = [ "compress=zstd" "subvol=root" ];
+      options = [ "subvol=root" "compress=zstd" ];
     };
 
   fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/a3ddfbaf-91e8-4b04-8df0-77f2d52b084e";
+    { device = "/dev/disk/by-uuid/204f06b0-6b5b-4ede-b07e-bc733a8aa0fc";
       fsType = "btrfs";
-      options = [ "compress=zstd" "subvol=home" ];
+      options = [ "subvol=home" "compress=zstd" ];
     };
 
   fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/a3ddfbaf-91e8-4b04-8df0-77f2d52b084e";
+    { device = "/dev/disk/by-uuid/204f06b0-6b5b-4ede-b07e-bc733a8aa0fc";
       fsType = "btrfs";
-      options = [ "compress=zstd" "noatime" "subvol=nix" ];
+      options = [ "subvol=nix" "compress=zstd"  "noatime" ];
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/12CE-A600";
+    { device = "/dev/disk/by-uuid/1DD1-0CCF";
       fsType = "vfat";
       options = [ "fmask=0022" "dmask=0022" ];
     };
+
 
   swapDevices = [ ];
 
