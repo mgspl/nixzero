@@ -8,24 +8,31 @@
     inherit
       (ezModules)
       btop
+      dms
       exportModules
       firefox
       gammastep
+      helix
       kitty
-      mango
       mpv
-      neovim
+      niri
       packages
-      portals
       starship
-      swayidle
-      swaylock
-      swayosd
       theme
-      waybar
-      wlogout
+      vesktop
+      zed
       ;
   };
 
   programs.home-manager.enable = true;
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+    };
+    # Overlays
+    overlays = [
+      (import ../packages/overlay.nix)
+      inputs.niri.overlays.niri
+    ];
+  };
 }

@@ -6,7 +6,7 @@
     xdgOpenUsePortal = true;
 
     config = {
-      maomao = {
+      mango = {
         default = ["wlr"];
         "org.freedesktop.impl.portal.Settings" = ["wlr" "gtk"];
         "org.freedesktop.impl.portal.Secret" = ["gnome-keyring"];

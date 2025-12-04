@@ -3,10 +3,6 @@
   programs.waybar = {
     enable = true;
 
-    package = pkgs.waybar.overrideAttrs (previousAttrs: {
-      patches = [./patches/hide-vacant.patch];
-    });
-
     settings = {
       mainBar = {
         layer = "bottom";
@@ -18,9 +14,9 @@
         reload_style_on_change = true;
         height = 35;
         modules-left = [
-          #"hyprland/workspaces"
-          "dwl/tags"
-          "dwl/window"
+          "niri/workspaces"
+          #"dwl/tags"
+          "niri/window"
         ];
         modules-right = [
           "tray"

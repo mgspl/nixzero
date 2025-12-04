@@ -30,25 +30,25 @@
     sway.enable = true;
     package = pkgs.bibata-cursors;
     name = "Bibata-Modern-Ice";
-    size = 23;
+    size = 24;
   };
 
-  /*
-   catppuccin.kvantum = {
-  enable = true;
-  apply = true;
-  flavor = "mocha";
-  accent = "blue";
+  catppuccin.kvantum = {
+    enable = true;
+    apply = true;
+    flavor = "mocha";
+    accent = "blue";
   };
-  */
 
-  home.packages = with pkgs; [catppuccin-qt5ct lightly-boehs];
+  #home.packages = with pkgs; [catppuccin-qt5ct darkly darkly-qt5];
 
   qt = {
     enable = true;
-    platformTheme.name = "qtct";
+    platformTheme.name = "kvantum";
+    style.name = "kvantum";
   };
 
+  /*
   xdg.enable = true;
   xdg.configFile = let
     package = pkgs.catppuccin-qt5ct;
@@ -66,6 +66,7 @@
     "qt5ct/qt5ct.conf".text = qtctConf;
     "qt6ct/qt6ct.conf".text = qtctConf;
   };
+  */
 
   /*
    xdg.configFile = {

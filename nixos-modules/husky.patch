@@ -1,0 +1,17 @@
+diff --git a/Controllers/EVisionKeyboardController/EVisionKeyboardControllerDetect.cpp b/Controllers/EVisionKeyboardController/EVisionKeyboardControllerDetect.cpp
+index 45f6a93d..52b6a009 100644
+--- a/Controllers/EVisionKeyboardController/EVisionKeyboardControllerDetect.cpp
++++ b/Controllers/EVisionKeyboardController/EVisionKeyboardControllerDetect.cpp
+@@ -37,6 +37,7 @@
+ #define WOMIER_K66_PID              0x7698
+ #define BYGG_CSB_ICL01_PID          0x5041
+ #define GAMEPOWER_OGRE_RGB_PID      0x7672
++#define HUSKY_BLIZZARD_PID          0xB12B
+ 
+ /******************************************************************************************\
+ *                                                                                          *
+@@ -123,3 +124,4 @@ REGISTER_HID_DETECTOR_IP("EVision Keyboard 320F:505B",      DetectEVisionKeyboar
+ REGISTER_HID_DETECTOR_IP("Endorfy Omnis",                   DetectEndorfyKeyboards,   EVISION_KEYBOARD3_VID, ENDORFY_OMNIS_PID,         1, EVISION_KEYBOARD_USAGE_PAGE);
+ REGISTER_HID_DETECTOR_IP("CSB/ICL01 Keyboard",              DetectEVisionV2Keyboards, EVISION_KEYBOARD2_VID, BYGG_CSB_ICL01_PID,        1, EVISION_KEYBOARD_USAGE_PAGE);
+ REGISTER_HID_DETECTOR_IP("Gamepower Ogre RGB 0C45:7672",    DetectEVisionKeyboards,   EVISION_KEYBOARD_VID,  GAMEPOWER_OGRE_RGB_PID,    1, EVISION_KEYBOARD_USAGE_PAGE);
++REGISTER_HID_DETECTOR_IP("Evision Keyboard 0C45:B12B",      DetectEndorfyKeyboards,   EVISION_KEYBOARD_VID,  HUSKY_BLIZZARD_PID ,       1, EVISION_KEYBOARD_USAGE_PAGE);

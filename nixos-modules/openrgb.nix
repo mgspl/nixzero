@@ -2,14 +2,16 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+/*
+     let
   openrgb = pkgs.openrgb.overrideAttrs {
     version = "git";
     src = pkgs.fetchFromGitLab {
       owner = "CalcProgrammer1";
       repo = "OpenRGB";
-      rev = "219b8909edc39b8584d3dec91c647462b338074d";
-      hash = "sha256-LiI/RWFvW4sxeGNn3PT+jiTiO0BUt72mHu/UFGWBqGU=";
+      rev = "8a63cfbf2581ed35c7c771bcaa5516678238acc3";
+      hash = "sha256-UyllLHdyzZf/Fxp2oW2MDw0o28FruJBNiRZv7LL/mAo=";
     };
     postPatch = ''
       patchShebangs scripts/build-udev-rules.sh
@@ -17,12 +19,14 @@
         --replace "/usr/bin/env chmod" "${lib.getExe' pkgs.coreutils "chmod"}"
     '';
   };
-in {
+in
+*/
+{
   # Enable OpenRGB
 
   services.hardware.openrgb = {
     enable = true;
-    package = openrgb;
+    package = pkgs.openrgb_git;
   };
-  services.udev.packages = [openrgb];
+  services.udev.packages = [pkgs.openrgb_git];
 }

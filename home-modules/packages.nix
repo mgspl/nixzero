@@ -1,14 +1,25 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   home.packages = with pkgs; [
     # Programs
-    discord
+    vesktop
     loupe
     nautilus
     papers
-    losslesscut-bin
-    youtube-music
+    #youtube-music
     gnome-calculator
     gnome-text-editor
+    kdePackages.kdenlive
+    #zenmonitor
+
+    inputs.ev357-nurpkgs.packages.${pkgs.stdenv.hostPlatform.system}.helium
+    inputs.loneros-nurpkgs.packages.${pkgs.stdenv.hostPlatform.system}.pear-desktop
+
+    windsurf
+    #zed-editor-fhs
 
     # Tools
     unzip
@@ -16,16 +27,16 @@
     killall
     wlr-randr
     pamixer
-    wlr-randr
+    swaybg
     microfetch
+    ffmpegthumbnailer
 
-    # Fonts
-    nerd-fonts.adwaita-mono
-    noto-fonts
+    # Gaming
+    #heroic
+    #inputs.nix-gaming.packages.${pkgs.system}.wine-cachyos
 
     # Compositor
     playerctl
-    clipse
     pwvucontrol
     imagemagick
     wl-clipboard

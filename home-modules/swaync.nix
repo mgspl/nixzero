@@ -29,24 +29,27 @@
       hide-on-clear = true;
       hide-on-action = true;
       script-fail-notify = true;
-      widgets = ["dnd" "buttons-grid" "mpris" "volume" "title" "notifications"];
+      widgets = ["mpris" "volume" "backlight" "dnd" "title" "notifications"];
       widget-config = {
+        backlight = {
+          label = " 󰃟 ";
+        };
         title = {
           text = "Notificações";
           clear-all-button = true;
           button-text = " ";
         };
         volume = {
-          label = " ";
-          expand-button-label = "";
-          collapse-button-label = "";
+          label = " 󰕾 ";
+          expand-button-label = " ";
+          collapse-button-label = " ";
           show-per-app = true;
-          show-per-app-icon = true;
+          show-per-app-icon = false;
           show-per-app-label = true;
         };
-        dnd = {text = " Não pertube";};
+        dnd = {text = "Não pertube";};
         mpris = {
-          image-size = 50;
+          image-size = 60;
           image-radius = 0;
         };
         label = {
@@ -56,38 +59,26 @@
         buttons-grid = {
           actions = [
             {
-              label = "";
-              command = "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+              label = " ";
+              active = false;
+              command = "sh -c '[[ $SWAYNC_TOGGLE_STATE == true ]] && pactl set-source-mute @DEFAULT_SOURCE@ 1 || pactl set-source-mute @DEFAULT_SOURCE@ 0'";
+              update-command = "sh -c '[[ $(pactl get-source-mute @DEFAULT_SOURCE@) == *yes* ]] && echo true || echo false'";
               type = "toggle";
             }
             {
-              label = "";
-              command = "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
+              label = " ";
               type = "toggle";
+              active = false;
+              command = "sh -c '[[ $SWAYNC_TOGGLE_STATE == true ]] && pactl set-sink-mute @DEFAULT_SINK@ 1 || pactl set-sink-mute @DEFAULT_SINK@ 0'";
+              update-command = "sh -c '[[ $(pactl get-sink-mute @DEFAULT_SINK@) == *yes* ]] && echo true || echo false'";
             }
             {
-              label = "󰤨";
-              command = "nm-connection-editor";
-            }
-            {
-              label = "󰂯";
-              command = "blueman-manager";
-            }
-            {
-              label = "";
-              command = "shutdown now";
-            }
-            {
-              label = "󰤄";
+              label = "󰤄 ";
               command = "loginctl suspend";
             }
             {
               label = "";
               command = "swaylock";
-            }
-            {
-              label = "";
-              command = "wlogout";
             }
           ];
         };
@@ -112,238 +103,383 @@
       };
     };
     style = ''
-           /* Colors */
-      @define-color background 	    #1e1e2e;
-      @define-color background-alt 	    #181825;
-      @define-color background-alt-darker #11111b;
-      @define-color accent-normal    	    #89b4fa;
-      @define-color accent-error     	    #f38ba8;
-      @define-color bordercolor           #89b4fa;
-      @define-color fontcolor 	    #cdd6f4;
-      @define-color fontaltcolor 	    #bac2de;
+                  /* ========================================================================
+         SwayNC CSS Configuration - Catppuccin Theme
+         Reformatted for better readability and maintainability
+      ======================================================================== */
 
+      /* ========================================================================
+         COLOR PALETTE - Gruvbox Inspired
+      ======================================================================== */
+      @define-color bg-primary #1e1e2e;        /* Dark background - main canvas */
+      @define-color bg-secondary #181825;      /* Secondary background - panels */
+      @define-color bg-tertiary #11111b;       /* Tertiary background - hover states */
+      @define-color bg-selected #9399b2;       /* Selection background */
 
-      /* Config */
+      @define-color fg-primary #cdd6f4;         /* Primary text - cream/off-white */
+      @define-color fg-secondary #bac2de;      /* Secondary text - muted cream */
+      @define-color fg-tertiary #a6adc8;       /* Tertiary text - greyish cream */
+      @define-color fg-disabled #6c7086;       /* Disabled text - dark grey */
 
+      @define-color accent-green #89b4fa;       /* Spotify green accent */
+      @define-color accent-orange #89b4fa;      /* Warm orange accent */
+      @define-color accent-red #89b4fa;         /* Error/critical red */
+      @define-color accent-blue #89b4fa;        /* Info blue */
+      @define-color accent-purple #89b4fa;      /* Purple accent */
+
+      @define-color border-primary #89b4fa;     /* Primary border color */
+      @define-color border-focus #89b4fa;       /* Focus border - green accent */
+
+      /* Special Purpose Colors */
+      @define-color mpris-album-art-overlay rgba(0, 0, 0, 0.55);
+      @define-color mpris-button-hover rgba(0, 0, 0, 0.5);
+
+      /* ========================================================================
+         GLOBAL STYLES
+      ======================================================================== */
       * {
-          font-family: "JetbrainsMono NFP SemiBold";
-          font-style: italic;
+          outline: none;
+          font-family: "Iosevka Nerd Font", monospace;
+          font-size: 18px;
+          text-shadow: none;
+          color: @fg-primary;
       }
 
-      /* Notification */
+      /* ========================================================================
+         CONTROL CENTER - Main notification panel
+      ======================================================================== */
+      .control-center {
+          background-color: @bg-primary;
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.65);
+          border: 2px solid @accent-orange;
+          padding: 5px;
+          border-radius: 4px;
+      }
 
+      .control-center .notification-row .notification-background {
+          border-radius: 4px;
+          margin-top: 5px;
+      }
+
+      .control-center .notification-row .notification-background .notification {
+          border-radius: 4px;
+      }
+
+      .control-center .notification-row .notification-background .close-button {
+          border-radius: 4px;
+      }
+
+      /* ========================================================================
+         NOTIFICATION STYLES
+      ======================================================================== */
       .notification {
-          background: @background;
-          color: @fontcolor;
-          border: 3px solid @bordercolor;
-          border-radius: 10px;
-          padding:10px;
+          background-color: @bg-primary;
+          border-radius: 4px;
+          border: 1px solid @fg-secondary;
+          margin: 8px 2px;
       }
 
-      .body {
-        color: @fontcolor;
+      .notification > *:last-child > * {
+          margin: 5px;
       }
 
+      /* Notification Content */
+      .notification-content {
+          padding: 15px 10px 10px 20px;
+          border-radius: 4px;
+      }
+
+      /* Text Elements */
       .summary {
-        font-size: 16px;
-        font-weight: 700;
-        background: transparent;
-        color: @accent-normal;
-        text-shadow: none;
+          font-size: 1.1rem;
       }
 
       .time {
-        font-size: 16px;
-        font-weight: 700;
-        background: transparent;
-        color: @fontcolor;
-        text-shadow: none;
-        margin-right: 18px;
+          font-size: 0.8rem;
       }
 
+      .body {
+          font-size: 1rem;
+      }
+
+      /* Notification Actions */
+      .notification-action > button {
+          padding: unset;
+          margin: unset;
+          border-radius: 4px;
+      }
+
+      .notification-action > label {
+          font-size: 1rem;
+          font-weight: normal;
+      }
+
+      /* Notification Priority Styles */
+      .notification.critical {
+          background-color: @accent-red;
+          box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.65);
+          border-radius: 4px;
+      }
+
+      .notification.low,
+      .notification.normal {
+          background-color: @bg-primary;
+          box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.65);
+          border-radius: 4px;
+      }
+
+      /* Close Button */
       .close-button {
-        background-color: @accent-error;
-        color: @fontaltcolor;
-        margin-top: 5px;
-        margin-right: 5px;
-        border-radius: 6px;
+          background-color: transparent;
       }
 
-      .notification-default-action:hover,
-      .notification-action:hover {
-          color: @fontcolor;
-          background: transparent;
+      .close-button:hover {
+          color: @accent-red;
       }
 
-      .notification.critical progress {
-        background-color: @accent-error;
-      }
-
-      .notification.low progress,
-      .notification.normal progress {
-        background-color: @accent-normal;
-      }
-
-      /* Control Center */
-
-      .control-center {
-          background-color: @background;
-          color: @fontcolor;
-          border: 3px solid @bordercolor;
-          padding: 10px;
-      }
-
-      /* Notifications expanded-group */
-
-      .notification-group {
-        background-color: transparent;
-        margin: 2px 8px 2px 8px;
-        font-size: 14px;
-
-      }
-
+      /* ========================================================================
+         NOTIFICATION GROUPS
+      ======================================================================== */
+      .notification-group-header,
       .notification-group-icon {
-        color: @fontcolor;
-      }
-
-      .notification-group-headers {
-        color: @fontcolor;
+          font-size: 0.9rem;
       }
 
       .notification-group-collapse-button,
       .notification-group-close-all-button {
-        background: @accent-normal;
-        color: @fontaltcolor;
-        margin: 4px;
-        border-radius: 6px;
-        padding: 4px;
+          box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.35);
+          background-color: @bg-tertiary;
+          border-radius: 4px;
       }
 
-      .notification-group-collapse-button:hover,
+      .notification-group-collapse-button:hover {
+          background-color: @accent-blue;
+      }
+
       .notification-group-close-all-button:hover {
-        background: @accent-error;
-        color: @fontaltcolor;
+          background-color: @accent-red;
       }
 
-
-      /* widget title */
-      .widget-title {
-        color: @fontcolor;
-      }
-      .widget-title>button {
-        font-size: 1rem;
-        color: @fontcolor;
-        background: @background-alt-darker;
-        box-shadow: none;
+      /* ========================================================================
+         SCROLLBARS & SLIDERS
+      ======================================================================== */
+      trough highlight {
+          background: @accent-blue;
+          border-radius: 4px;
       }
 
-      .widget-title>button:hover {
-        background: @accent-error;
-        color: @fontaltcolor;
+      scale trough {
+          margin: 0rem 1rem;
+          background-color: @bg-tertiary;
+          min-height: 8px;
+          min-width: 70px;
+          border-radius: 4px;
       }
 
-      /* widget button grid */
-      button {
-          border: 0px;
-          min-width: 35px;
-          background: @background-alt;
+      slider {
+          background-color: @fg-primary;
+          border-radius: 4px;
       }
 
+      tooltip {
+          background-color: @bg-tertiary;
+          border-radius: 4px;
+      }
+
+      /* ========================================================================
+         WIDGET STYLES
+      ======================================================================== */
+
+      /* ========================================================================
+         BUTTONS GRID WIDGET - Quick action buttons
+      ======================================================================== */
       .widget-buttons-grid {
-        font-size: x-large;
-        background: @background-alt-darker;
+          font-size: 1rem;
+          padding: 20px 20px ;
+          margin: unset;
       }
 
       .widget-buttons-grid > flowbox > flowboxchild > button {
-          color: @fontcolor;
-          margin: 8px;
-          padding: 10px;
+          background: @bg-tertiary;
+          border: 1px solid @accent-green;
+          box-shadow: 0px 0px 10px @bg-primary;
+          border-radius: 4px;
+          min-width: 60px;
+          min-height: 30px;
+          padding: 7px;
+          margin: 0 3px 0;
+          transition: all .5s ease;
       }
 
-      .widget-buttons-grid>flowbox>flowboxchild>button:hover {
-        background: alpha(@fontcolor, 0.55);
+      .widget-buttons-grid > flowbox > flowboxchild > button:hover {
+          background: @bg-selected;
       }
 
       .widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked {
-        background: @accent-normal;
+          background: @accent-green;
       }
 
-      .widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked label {
-          color: @fontaltcolor;
+      .widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked:hover {
+          background: @accent-green;
       }
 
+      /* ========================================================================
+         MPRIS WIDGET - Media player controls
+      ======================================================================== */
 
 
-
-      /* dnd widget */
-      .widget-dnd {
-        background: transparent;
-        border: 1px solid transparent;
-        font-size: large;
-        color: @fontcolor;
+      .widget-mpris .widget-mpris-player {
+          padding: 16px;
+          margin: 16px 5px;
+          background-color: @mpris-button-hover;
+          border-radius: 4px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.65);
       }
 
-      .widget-dnd>label {
-        color: @fontcolor;
+      .widget-mpris .widget-mpris-player .widget-mpris-album-art {
+          border-radius: 4px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.65);
       }
 
-      .widget-dnd>switch {
-        background: @background-alt;
-        color: @fontcolor;
-        border-radius: 6px;
+      .widget-mpris .widget-mpris-player .widget-mpris-title {
+          font-weight: bold;
+          font-size: 1.2rem;
+          color: @accent-purple;
+          margin: 0px 8px 8px 8px;
       }
 
-      .widget-dnd>switch:checked {
-        background: @accent-error;
-        border: 1px solid @accent-error;
+      .widget-mpris .widget-mpris-player .widget-mpris-subtitle {
+          font-size: 1rem;
+          color: @accent-purple;
       }
 
+      .widget-mpris .widget-mpris-player > box > button:hover {
+          background-color: @mpris-button-hover;
+      }
 
-      /* volume & backlight widget */
+      .widget-mpris > box > button:hover {
+          background: alpha(@bg-selected, 0.6);
+      }
 
+      .widget-mpris button:first-child,
+      .widget-mpris button:last-child {
+          opacity: 0;
+          min-width: 0;
+          min-height: 0;
+          padding: 0;
+          margin: 0;
+      }
+
+      .widget-mpris .widget-mpris-player button:first-child,
+      .widget-mpris .widget-mpris-player button:last-child {
+          opacity: 0;
+          min-width: 0;
+          min-height: 0;
+          padding: 0;
+          margin: 0;
+      }
+
+      /* ========================================================================
+         VOLUME WIDGET - Audio controls
+      ======================================================================== */
       .widget-volume {
-        background: @background-alt-darker;
-        color: @fontcolor;
-        font-size: x-large;
+          padding: 6px 5px 5px 5px;
+          margin: unset;
+          font-size: 1.3rem;
       }
 
+      .widget-volume > box > button {
+          border: none;
+          background-color: #3A372F;
+      }
+      .widget-volume > box > button:hover {
+          background-color: @accent-blue;
+          color: @fg-primary;
+      }
+      .widget-volume > box > button:active {
+          background-color: @accent-blue;
+      }
 
+      .per-app-volume {
+          padding: 4px 8px 8px 8px;
+          margin: 0px 8px 8px 8px;
+      }
+
+      /* ========================================================================
+         BACKLIGHT WIDGET - Brightness controls
+      ======================================================================== */
       .widget-backlight {
-        background: @background-alt-darker;
-        color: @fontcolor;
-        font-size: x-large;
+          padding: 0 0 3px 16px;
+          margin: unset;
+          font-size: 1.1rem;
       }
 
-      /* music player widget */
-      .widget-mpris {
-        background: transparent;
-        margin: 4px;
+      /* ========================================================================
+         DND WIDGET - Do Not Disturb toggle
+      ======================================================================== */
+
+      /* DND text */
+      .widget-dnd > label {
+          color: @accent-blue; /* Replace with your desired color */
+      }
+      .widget-dnd {
+          font-weight: bold;
+          margin: unset;
+          padding: 20px 15px 15px 15px;
       }
 
-      .widget-mpris button {
-        background-color: transparent;
-        border-radius: 6px;
+      .widget-dnd > switch {
+          font-size: initial;
+          border-radius: 4px;
+          background: @bg-tertiary;
+          border: none;
+          box-shadow: none;
+          padding: 3px;
       }
 
-      .widget-mpris button:hover {
-        background-color: @accent-normal;
-        color: @fontaltcolor;
+      .widget-dnd > switch:checked {
+          background: @accent-blue;
+      }
+
+      .widget-dnd > switch slider {
+          background: @bg-primary;
+          border-radius: 4px;
+          min-width: 18px;
+          min-height: 18px;
+      }
+
+      /* ========================================================================
+         TITLE WIDGET - Header with clear all button
+      ======================================================================== */
+      .widget-title {
+          padding: unset;
+          margin: unset;
+          font-weight: bold;
+          padding: 15px;
+      }
+
+      .widget-title > label {
+          font-size: 1.5rem;
+      }
+
+      .widget-title > button {
+          padding: unset;
+          margin: unset;
+          text-shadow: none;
+          background: @accent-blue;
+          border: none;
+          box-shadow: none;
+          border-radius: 4px;
+          padding: 0px 6px;
+          transition: all .7s ease;
+      }
+
+      .widget-title > button:hover {
+          background: @accent-blue;
+          box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.65);
       }
 
 
-      /* sliders in backlight and volume */
-
-      trough slider {
-          background: @fontcolor;
-      }
-
-      trough slider:hover {
-          background: @accent-normal;
-      }
-
-
-      trough highlight {
-        background: @accent-normal;
     '';
   };
 

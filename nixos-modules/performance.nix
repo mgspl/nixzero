@@ -1,11 +1,16 @@
-{lib, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   zramSwap = {
     enable = true;
     algorithm = "zstd";
     memoryPercent = 15;
   };
 
-  systemd.oomd = {
+  /*
+    systemd.oomd = {
     enable = lib.mkForce true;
     enableRootSlice = true;
     enableUserSlices = true;
@@ -14,12 +19,27 @@
       "DefaultMemoryPressureDurationSec" = "20s";
     };
   };
+  */
 
-  services.bpftune.enable = true;
+  services = {
+    bpftune.enable = true;
+    lact.enable = true;
+    scx = {
+      enable = true;
+      package = pkgs.scx.rustscheds;
+      scheduler = "scx_flash";
+      extraArgs = ["-m all"];
+    };
+  };
+
+  # Enable User Queue
+  environment.variables = {
+    AMD_USERQ = 1;
+  };
 
   # Kernel tweaks from CachyOS
   boot.kernel.sysctl = {
-    "vm.swappiness" = 100;
+    "vm.swappiness" = 10;
     "vm.vfs_cache_pressure" = 50;
     "vm.dirty_bytes" = 268435456;
     "vm.page-cluster" = 0;
@@ -30,6 +50,7 @@
     "kernel.nmi_watchdog" = 0;
     "kernel.unprivileged_userns_clone" = 1;
     "kernel.kptr_restrict" = 2;
+    "kernel.printk" = "3 3 3 3";
 
     "net.ipv4.tcp_ecn" = 1;
     "net.core.netdev_max_backlog" = 4096;
@@ -41,25 +62,21 @@
     "net.ipv3.tcp_fin_timeout" = 5;
 
     "fs.file-max" = 2097152;
+
+    "kernel.split_lock_mitigate" = 0;
   };
 
   #udev rules from CachyOS
   services.udev.extraRules = ''
-        ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}=="*",  ATTR{link_power_management_policy}="max_performance"
-        
-        ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="none"
+    ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}=="*",  ATTR{link_power_management_policy}="max_performance"
 
+    DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"
 
-        DEVPATH=="/devices/virtual/misc/cpu_dma_latency", OWNER="root", GROUP="audio", MODE="0660"
+    ACTION=="add|change", SUBSYSTEM=="block", ATTR{queue/scheduler}="bfq"
+
+    ACTION=="add|change", KERNEL=="nvme[0-9]*", ATTR{queue/rotational}=="0", \
+    ATTR{queue/scheduler}="adios"
   '';
-
-  #Nvidia modprobe tweaks from Cachy
-  boot.extraModprobeConfig = ''
-    blacklist iTCO_wdt
-  '';
-
-  # Enable wireless database
-  hardware.wirelessRegulatoryDatabase = true;
 
   # Enable BBR
   boot.kernelModules = ["tcp_bbr"];

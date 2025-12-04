@@ -10,7 +10,7 @@ in {
   home.packages = [pkgs.wlopm];
   services.swayidle = {
     enable = true;
-    systemdTarget = "mango-session.target";
+    systemdTarget = "niri-session.target";
     events = [
       {
         event = "before-sleep";

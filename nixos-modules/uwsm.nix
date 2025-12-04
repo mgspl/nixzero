@@ -4,9 +4,9 @@
   lib,
   ...
 }: {
-  services.greetd = let
+  /*services.greetd = let
     session = {
-      command = "${lib.getExe config.programs.uwsm.package} start -- mango-uwsm.desktop";
+      command = "${lib.getExe config.programs.uwsm.package} start -- hyprland-uwsm.desktop";
       # command = "dbus-run-session ${pkgs.swayfx}/bin/sway";
       user = "miguel";
     };
@@ -17,10 +17,10 @@
       default_session = session;
       initial_session = session;
     };
-  };
+  }; */
 
   programs.regreet = {
-    enable = false;
+    enable = true;
 
     cursorTheme = {
       name = "Bibata-Modern-Classic";
@@ -54,7 +54,7 @@
   ];
 
   programs.uwsm = {
-    enable = true;
+    enable = false;
     /*
         waylandCompositors.sway = {
       binPath = "${lib.getExe  pkgs.swayfx}";
@@ -63,8 +63,7 @@
     };
     */
 
-    
-      waylandCompositors.mango = {
+    waylandCompositors.mango = {
       binPath = "/run/current-system/sw/bin/mango";
       prettyName = "Mango";
       comment = "Mango managed by UWSM";

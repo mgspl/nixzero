@@ -3,14 +3,22 @@
   pkgs,
   ...
 }: {
+  catppuccin.firefox = {
+    enable = true;
+    accent = "blue";
+    flavor = "mocha";
+    force = true;
+  };
   programs.firefox = {
     enable = true;
+    package = pkgs.firefox-bin;
 
     profiles.miguel = {
       isDefault = true;
       name = "Miguel";
 
-      extensions.packages = with inputs.rycee-nurpkgs.packages.${pkgs.system}; [
+      extensions.force = true;
+      extensions.packages = with inputs.rycee-nurpkgs.packages.${pkgs.stdenv.hostPlatform.system}; [
         bitwarden
         ublock-origin
         canvasblocker
